@@ -4,7 +4,7 @@ $(function(){
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
 
-  // set 300x300
+  // // set 300x300
   canvas.width = 300;
   canvas.height = 300;
 

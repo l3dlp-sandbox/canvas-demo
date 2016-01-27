@@ -13,15 +13,15 @@ function logoAnimation() {
 
   // Draw Loop
   (function drawFrame () {
-			self.utils.getAnimationFrame();                          // X-Browser support for requrestAnimationFrame method
-			window.requestAnimationFrame(drawFrame, canvas);         // Request Animation Frame tells the browser that we are ready to paint a new frame
-			self.ctx.clearRect(0, 0, canvas.width, canvas.height);   // Clear the canvas so we can render the next frame
+            self.utils.getAnimationFrame();                          // X-Browser support for requrestAnimationFrame method
+            window.requestAnimationFrame(drawFrame, canvas);         // Request Animation Frame tells the browser that we are ready to paint a new frame
+            self.ctx.clearRect(0, 0, canvas.width, canvas.height);   // Clear the canvas so we can render the next frame
 
       // Frequncy Variables for generating color wave
       var redFreq = 0.1,
-		      greenFreq = 0.3,
-		      blueFreq = 0.2,
-          tick = Date.now()/500;  // use the time in ms as a ticker
+              greenFreq = 0.2,
+              blueFreq = 0.3,
+          tick = Date.now()/250;  // use the time in ms as a ticker
 
       // RGB for Background Color
       var redA   = Math.sin(redFreq*tick + 0) * 127 + 128,
@@ -30,14 +30,33 @@ function logoAnimation() {
 
       // RGB for Inner Color
       var redB   = Math.sin(redFreq*tick/2 + 0) * 127 + 128,
-          greenB = Math.sin(greenFreq*tick/2 + 2) * 127 + 128,
-          blueB  = Math.sin(blueFreq*tick/2 + 4) * 127 + 128;
+          greenB = Math.sin(greenFreq*tick/2 + 4) * 127 + 128,
+          blueB  = Math.sin(blueFreq*tick/2 + 8) * 127 + 128;
 
       // Draw the logo with our two new colors
-      self.draw(self.RGB2Color(redA, greenA, blueA), self.RGB2Color(redB, greenB, blueB));
-	}());
-};
+      self.drawLogo(self.RGB2Color(redA, greenA, blueA), self.RGB2Color(redB, greenB, blueB));
 
+      if (self.carX > canvas.width + 100)
+      {
+        self.carX = -10;
+
+        if (self.carY == 120)
+        {
+          self.carY = 235;
+        }
+        else
+        {
+          self.carY = 120;
+        }
+      }
+      else
+      {
+        self.carX = self.carX + 5;
+      }
+
+      self.drawCars(self.carX, self.carY);
+    }());
+};
 
 // Init Canvas elm, set contex and size
 
@@ -56,12 +75,26 @@ logoAnimation.prototype.initCanvas = function() {
   self.centerX = canvas.width / 2;
   self.centerY = canvas.height / 2;
   self.radius = canvas.width / 2;
+
+  // set initial car location
+  self.carX = -10;
+  self.carY = 120;
 };
 
 
+logoAnimation.prototype.drawCars = function(x, y) {
+  var self = this;
+
+  // Base Circle
+  self.ctx.beginPath();
+  self.ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
+  self.ctx.fillStyle = '#fff';
+  self.ctx.fill();
+}
+
 // Draw logo each frame
 
-logoAnimation.prototype.draw = function(colorBg, colorStroke) {
+logoAnimation.prototype.drawLogo = function(colorBg, colorStroke) {
   var self = this;
 
   // Base Circle
@@ -110,7 +143,6 @@ logoAnimation.prototype.draw = function(colorBg, colorStroke) {
   self.ctx.lineTo(225, 60);
   self.ctx.stroke();
 };
-
 
 // Helpers
 

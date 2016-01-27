@@ -23,6 +23,7 @@ $(function(){
 
   // 'M'
   ctx.beginPath()
+  ctx.lineWidth = 2;
   ctx.moveTo(2, 40);
   ctx.lineTo(2, 1);
   ctx.lineTo(20, 32);

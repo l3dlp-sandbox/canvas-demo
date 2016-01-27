@@ -19,9 +19,9 @@ function logoAnimation() {
 
       // Frequncy Variables for generating color wave
       var redFreq = 0.1,
-		      greenFreq = 0.3,
-		      blueFreq = 0.2,
-          tick = Date.now()/500;  // use the time in ms as a ticker
+		      greenFreq = 0.2,
+		      blueFreq = 0.3,
+          tick = Date.now()/250;  // use the time in ms as a ticker
 
       // RGB for Background Color
       var redA   = Math.sin(redFreq*tick + 0) * 127 + 128,
@@ -30,8 +30,8 @@ function logoAnimation() {
 
       // RGB for Inner Color
       var redB   = Math.sin(redFreq*tick/2 + 0) * 127 + 128,
-          greenB = Math.sin(greenFreq*tick/2 + 2) * 127 + 128,
-          blueB  = Math.sin(blueFreq*tick/2 + 4) * 127 + 128;
+          greenB = Math.sin(greenFreq*tick/2 + 4) * 127 + 128,
+          blueB  = Math.sin(blueFreq*tick/2 + 8) * 127 + 128;
 
       // Draw the logo with our two new colors
       self.draw(self.RGB2Color(redA, greenA, blueA), self.RGB2Color(redB, greenB, blueB));
@@ -49,13 +49,17 @@ logoAnimation.prototype.initCanvas = function() {
   self.ctx = canvas.getContext('2d');
 
   // set 300x300
-  self.canvas.width = 300;
+  self.canvas.width = 700;
   self.canvas.height = 300;
 
-  // Get canvas center point
-  self.centerX = canvas.width / 2;
-  self.centerY = canvas.height / 2;
-  self.radius = canvas.width / 2;
+  // Get current position to canvas center point
+  self.posX = canvas.width / 2;
+  self.posY = canvas.height / 2;
+  self.radius = 100;
+
+  self.dx = 2;
+  self.dy = 1;
+
 };
 
 
@@ -64,15 +68,26 @@ logoAnimation.prototype.initCanvas = function() {
 logoAnimation.prototype.draw = function(colorBg, colorStroke) {
   var self = this;
 
+  self.posX += self.dx;
+  self.posY += self.dy;
+
+  if (self.posX + 100 > canvas.width || self.posX - 100 < 0) {
+    self.dx = 0 - self.dx;
+  }
+
+  if (self.posY + 100 > canvas.height || self.posY - 100 < 0) {
+    self.dy = 0 - self.dy;
+  }
+
   // Base Circle
   self.ctx.beginPath();
-  self.ctx.arc(self.centerX, self.centerY, self.radius, 0, 2 * Math.PI, false);
+  self.ctx.arc(self.posX, self.posY, self.radius, 0, 2 * Math.PI, false);
   self.ctx.fillStyle = colorBg || '#333';
   self.ctx.fill();
 
   // Outline Circle
   self.ctx.beginPath();
-  self.ctx.arc(self.centerX, self.centerY, self.radius - 30, 0, 2 * Math.PI, false);
+  self.ctx.arc(self.posX, self.posY, self.radius - (self.radius * 0.1), 0, 2 * Math.PI, false);
   self.ctx.lineWidth = 10;
   self.ctx.strokeStyle = colorStroke || '#fff';
   self.ctx.stroke();
@@ -81,35 +96,28 @@ logoAnimation.prototype.draw = function(colorBg, colorStroke) {
   self.ctx.lineWidth = 13;
 
   // N/S 1
-  self.ctx.beginPath();
-  self.ctx.moveTo(80, 52);
-  self.ctx.lineTo(80, 248);
-  self.ctx.stroke();
+  self.drawLine(80, 52, 80, 248)
 
   // N/S 2
-  self.ctx.beginPath();
-  self.ctx.moveTo(190, 40);
-  self.ctx.lineTo(190, 260);
-  self.ctx.stroke();
+  self.drawLine(190, 40, 190, 260)
 
   // E/W 1
-  self.ctx.beginPath();
-  self.ctx.moveTo(30, 120);
-  self.ctx.lineTo(270, 120);
-  self.ctx.stroke();
+  self.drawLine(30, 120, 270, 120)
 
   // E/W 2
-  self.ctx.beginPath();
-  self.ctx.moveTo(65, 235);
-  self.ctx.lineTo(235, 235);
-  self.ctx.stroke();
+  self.drawLine(65, 235, 235, 235)
 
   // SW/NE
-  self.ctx.beginPath();
-  self.ctx.moveTo(105, 260);
-  self.ctx.lineTo(225, 60);
-  self.ctx.stroke();
+  self.drawLine(105, 260, 225, 60)
 };
+
+logoAnimation.prototype.drawLine = function(xFrom, yFrom, xTo, yTo) {
+  var self = this;
+  self.ctx.beginPath();
+  self.ctx.moveTo(self.posX - 113 + (xFrom/1.33), self.posY - 113 + (yFrom/1.33));
+  self.ctx.lineTo(self.posX - 113 + (xTo/1.33), self.posY - 113 + (yTo/1.33));
+  self.ctx.stroke();
+}
 
 
 // Helpers

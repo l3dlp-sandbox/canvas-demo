@@ -13,15 +13,15 @@ function logoAnimation() {
 
   // Draw Loop
   (function drawFrame () {
-			self.utils.getAnimationFrame();                          // X-Browser support for requrestAnimationFrame method
-			window.requestAnimationFrame(drawFrame, canvas);         // Request Animation Frame tells the browser that we are ready to paint a new frame
-			self.ctx.clearRect(0, 0, canvas.width, canvas.height);   // Clear the canvas so we can render the next frame
+            self.utils.getAnimationFrame();                          // X-Browser support for requrestAnimationFrame method
+            window.requestAnimationFrame(drawFrame, canvas);         // Request Animation Frame tells the browser that we are ready to paint a new frame
+            self.ctx.clearRect(0, 0, canvas.width, canvas.height);   // Clear the canvas so we can render the next frame
 
       // Frequncy Variables for generating color wave
       var redFreq = 0.1,
-		      greenFreq = 0.3,
-		      blueFreq = 0.2,
-          tick = Date.now()/500;  // use the time in ms as a ticker
+              greenFreq = 0.2,
+              blueFreq = 0.3,
+          tick = Date.now()/100;  // use the time in ms as a ticker
 
       // RGB for Background Color
       var redA   = Math.sin(redFreq*tick + 0) * 127 + 128,
@@ -30,12 +30,12 @@ function logoAnimation() {
 
       // RGB for Inner Color
       var redB   = Math.sin(redFreq*tick/2 + 0) * 127 + 128,
-          greenB = Math.sin(greenFreq*tick/2 + 2) * 127 + 128,
-          blueB  = Math.sin(blueFreq*tick/2 + 4) * 127 + 128;
+          greenB = Math.sin(greenFreq*tick/2 + 4) * 127 + 128,
+          blueB  = Math.sin(blueFreq*tick/2 + 8) * 127 + 128;
 
       // Draw the logo with our two new colors
-      self.draw(self.RGB2Color(redA, greenA, blueA), self.RGB2Color(redB, greenB, blueB));
-	}());
+      self.draw(self.RGB2Color(redA, greenA, blueA), self.RGB2Color(redB, greenB, blueB), self.centerX, self.centerY, Math.floor(Math.random() * 5000) + 1  );
+    }());
 };
 
 
@@ -61,18 +61,17 @@ logoAnimation.prototype.initCanvas = function() {
 
 // Draw logo each frame
 
-logoAnimation.prototype.draw = function(colorBg, colorStroke) {
+logoAnimation.prototype.draw = function(colorBg, colorStroke, centerX, centerY, turn) {
   var self = this;
-
   // Base Circle
   self.ctx.beginPath();
-  self.ctx.arc(self.centerX, self.centerY, self.radius, 0, 2 * Math.PI, false);
+  self.ctx.arc(centerX, centerY, self.radius, 0, 2 * Math.PI, false);
   self.ctx.fillStyle = colorBg || '#333';
   self.ctx.fill();
 
   // Outline Circle
   self.ctx.beginPath();
-  self.ctx.arc(self.centerX, self.centerY, self.radius - 30, 0, 2 * Math.PI, false);
+  self.ctx.arc(centerX, centerY, self.radius - 30, 0, 2 * Math.PI, false);
   self.ctx.lineWidth = 10;
   self.ctx.strokeStyle = colorStroke || '#fff';
   self.ctx.stroke();
@@ -109,6 +108,8 @@ logoAnimation.prototype.draw = function(colorBg, colorStroke) {
   self.ctx.moveTo(105, 260);
   self.ctx.lineTo(225, 60);
   self.ctx.stroke();
+
+  self.ctx.rotate(turn)
 };
 
 
